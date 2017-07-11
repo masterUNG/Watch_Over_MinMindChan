@@ -1,7 +1,10 @@
 package mean.chan.mind.sendgps;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,27 +16,60 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MyServiceActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private String[] loginStrings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.service_layout);
+
+        //Get Value From Intent
+        getValueFromIntent();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        addMapFragment();
+
+        //Back Controller
+        backController();
+
+        //Save Controller
+        saveController();
+
+
+    }   // Main Method
+
+    private void saveController() {
+        ImageView imageView = (ImageView) findViewById(R.id.imvSave);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MyServiceActivity.this, AddChildActivity.class);
+                intent.putExtra("Login", loginStrings);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void backController() {
+        ImageView imageView = (ImageView) findViewById(R.id.imvBack);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    private void getValueFromIntent() {
+        loginStrings = getIntent().getStringArrayExtra("Login");
+    }
+
+    private void addMapFragment() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -42,5 +78,6 @@ public class MyServiceActivity extends FragmentActivity implements OnMapReadyCal
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-    }
-}
+    }   // onMapReady
+
+}   // Main Class
